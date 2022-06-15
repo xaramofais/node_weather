@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+      integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+      integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+      crossorigin=""
+    ></script>
+    <style>
+      #checkinMap {
+        height: 240px;
+        margin: 8px 0px;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <title>The Weather Here</title>
+  </head>
+  <body>
+    <h1>The Weather Here</h1>
+    <div>
+      <a href="/">check in</a> | <a href="/checkins">view checkins</a>
+    </div>
+    <div id="checkinMap"></div>
+    <script>
+
+const mymap = L.map('checkinMap').setView([0, 0], 1);
+const attribution =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+//const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const tileUrl =
+  'https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png';
+const tiles = L.tileLayer(tileUrl, { attribution });
+tiles.addTo(mymap);
+
+getData();
+
+async function getData() {
+  const response = await fetch('/api');
+  const data = await response.json();
+  
+  for (item of data) {
+    const marker = L.marker([item.lat, item.lon]).addTo(mymap);
+    let txt = `The weather here at ${item.lat}&deg;,
+    ${item.lon}&deg; is ${item.weather} with
+    a temperature of ${item.air}&deg; C.`;
+
+    marker.bindPopup(txt);
+  }
+  console.log(data);
+}
+
+    
+    
+    </script>
+  </body>
+</html>
